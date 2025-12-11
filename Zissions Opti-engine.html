@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zissions Packaging Opti-Engine v2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Urbanist:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: #0f1115;
+            --bg-card: #161b22;
+            --text-main: #c9d1d9;
+            --text-header: #ffffff;
+            --accent-green: #2ea043;
+            --accent-blue: #58a6ff;
+            --accent-neon: #00ff9d;
+            --accent-red: #da3633;
+            --border-subtle: #30363d;
+            --font-tech: 'Rajdhani', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-subtle) var(--bg-dark);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            height: 50px;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .brand {
+            font-family: var(--font-tech);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-header);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand i {
+            color: var(--accent-neon);
+        }
+
+        .status-bar {
+            font-family: var(--font-code);
+            font-size: 11px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            box-shadow: 0 0 6px var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        /* MAIN LAYOUT */
+        .main-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 300px;
+            height: calc(100vh - 50px);
+            overflow: hidden;
+        }
+
+        /* LEFT PANEL: DATA & CHAT */
+        .panel-left {
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-subtle);
+            display: grid;
+            grid-template-rows: 40% 60%;
+            /* Split between Data Logs and Chat */
+            overflow: hidden;
+        }
+
+        .sub-panel {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
+
+        .panel-title {
+            font-family: var(--font-tech);
+            font-size: 16px;
+            color: var(--text-header);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-terminal {
+            background-color: #0d0d0d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: var(--font-code);
+            font-size: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            color: #8b949e;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            border-left: 2px solid transparent;
+            padding-left: 5px;
+        }
+
+        .log-entry.scraping {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .log-entry.update {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .log-entry.alert {
+            border-color: #ff7b72;
+            color: #ff7b72;
+        }
+
+        /* CHAT INTERFACE */
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 5px;
+        }
+
+        .msg {
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 90%;
+            line-height: 1.4;
+        }
+
+        .msg.bot {
+            background: rgba(48, 54, 61, 0.4);
+            border-left: 2px solid var(--accent-neon);
+            align-self: flex-start;
+        }
+
+        .msg.user {
+            background: rgba(88, 166, 255, 0.1);
+            border-right: 2px solid var(--accent-blue);
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .sample-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .prompt-chip {
+            background: #21262d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--accent-blue);
+        }
+
+        .prompt-chip:hover {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 5px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 10px;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: #0d0d0d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            color: #fff;
+            padding: 6px;
+            font-size: 12px;
+            font-family: var(--font-body);
+        }
+
+        /* CENTER PANEL: VISUALIZATION & OUTPUT */
+        .panel-center {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        /* ANN Canvas */
+        .viz-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            height: 300px;
+            flex-shrink: 0;
+        }
+
+        #ann-canvas {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1b2028 0%, #0d1117 100%);
+        }
+
+        .training-overlay {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            font-family: var(--font-code);
+            font-size: 12px;
+            color: var(--accent-neon);
+        }
+
+        /* Comparison Charts Area */
+        .comparison-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 15px;
+            display: none;
+            /* Hidden until simulation runs */
+            flex-shrink: 0;
+        }
+
+        .comparison-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .chart-grid {
+            display: flex;
+            height: 150px;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding-top: 20px;
+            gap: 20px;
+        }
+
+        .chart-group {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 100%;
+            position: relative;
+            width: 30%;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 10px;
+            justify-content: center;
+        }
+
+        .chart-bar {
+            width: 15px;
+            transition: height 1s ease;
+            height: 0;
+            position: relative;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .chart-bar:hover::after {
+            content: attr(data-val);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .bar-roi {
+            background: var(--accent-blue);
+        }
+
+        .bar-carbon {
+            background: var(--accent-green);
+        }
+
+        .bar-compl {
+            background: var(--accent-neon);
+        }
+
+        .group-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #8b949e;
+            font-weight: 600;
+        }
+
+        /* Pathways Grid */
+        .pathways-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding-bottom: 20px;
+        }
+
+        .pathway-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+            min-height: 200px;
+        }
+
+        .pathway-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .pathway-badge {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 4px 6px;
+            border-radius: 4px;
+            width: fit-content;
+            margin-bottom: 8px;
+        }
+
+        .badge-roi {
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .badge-eco {
+            background: rgba(46, 160, 67, 0.15);
+            color: var(--accent-green);
+        }
+
+        .badge-bal {
+            background: rgba(0, 255, 157, 0.15);
+            color: var(--accent-neon);
+        }
+
+        /* RIGHT PANEL: CONTROLS */
+        .panel-right {
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-subtle);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        select,
+        input[type="number"] {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-header);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 13px;
+            outline: none;
+            width: 100%;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .slider-container {
+            margin-top: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-neon);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), #238636);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: var(--font-tech);
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: filter 0.2s;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: var(--font-tech);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.4);
+            }
+
+            70% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 6px rgba(46, 160, 67, 0);
+            }
+
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(46, 160, 67, 0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loader */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loader {
+            border: 4px solid #30363d;
+            border-top: 4px solid var(--accent-neon);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand">
+            <img src="zissionslogo.png" alt="Zissions Logo" style="height: 30px;"> ZISSIONS OPTI-ENGINE <span
+                style="font-size:12px; opacity:0.6; margin-left:10px;">v2.0</span>
+        </div>
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>LIVE FEED ACTIVE</span>
+            </div>
+            <div class="status-item">
+                <i class="fa-solid fa-database" style="color: #8b949e"></i>
+                <span>LIT-DB CONNECTED</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Left Panel: Data & Chat -->
+        <div class="panel-left">
+            <!-- Data Log Section -->
+            <div class="sub-panel" style="flex: 0 0 35%;">
+                <div class="panel-title">
+                    <span><i class="fa-solid fa-tower-broadcast"></i> Data Ingestion</span>
+                    <span style="font-size:10px; color:#8b949e">142 Sources</span>
+                </div>
+                <div class="log-terminal" id="log-terminal">
+                    <!-- Logs injected by JS -->
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="sub-panel" style="flex: 1; border-bottom: none;">
+                <div class="panel-title">
+                    <span><i class="fa-solid fa-robot"></i> Zissions Consultant</span>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-history" id="chat-history">
+                        <div class="msg bot">
+                            Hello! I am your AI Sustainability Consultant. I can explain the simulation results or
+                            answer questions about EPR norms.
+                        </div>
+                    </div>
+                    <div class="sample-prompts">
+                        <div class="prompt-chip" onclick="sendPrompt('Impact of 30% rPET?')">Impact of 30% rPET?</div>
+                        <div class="prompt-chip" onclick="sendPrompt('Explain Multi-layer penalty')">Explain Multi-layer
+                            penalty</div>
+                        <div class="prompt-chip" onclick="sendPrompt('Current EPR target?')">Current EPR target?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="user-input" placeholder="Ask a question..."
+                            onkeypress="handleEnter(event)">
+                        <button class="btn-secondary" style="width:auto; padding:5px 10px;" onclick="sendUserMsg()"><i
+                                class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Visualization -->
+        <div class="panel-center">
+
+            <!-- ANN Visualization -->
+            <div class="viz-container">
+                <div class="viz-header">
+                    <h3 style="margin:0; font-family:var(--font-tech); font-size:18px; color:var(--text-header)">
+                        Reinforcement Learning Model</h3>
+                    <p style="margin:0; font-size:12px; color:#8b949e">Optimizing parameters via Deep Q-Network</p>
+                </div>
+                <canvas id="ann-canvas"></canvas>
+                <div class="training-overlay" id="training-stats">
+                    Epoch: 1205<br>Loss: 0.0341<br>Accuracy: 96.5%
+                </div>
+                <div class="loading-overlay" id="sim-loader">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+            <!-- Comparison Charts (Hidden initially) -->
+            <div class="comparison-section" id="comparison-section">
+                <div class="panel-title" style="margin-bottom:0;">
+                    <i class="fa-solid fa-chart-simple"></i> Pathway Comparison Analysis
+                </div>
+                <div style="font-size:11px; color:#8b949e; margin-bottom:10px;">
+                    <span style="color:var(--accent-blue)">■ ROI</span> &nbsp;
+                    <span style="color:var(--accent-green)">■ Carbon Savings</span> &nbsp;
+                    <span style="color:var(--accent-neon)">■ Compliance</span>
+                </div>
+                <div class="chart-grid">
+                    <!-- Group 1: ROI Focus -->
+                    <div class="chart-group">
+                        <div class="chart-bar bar-roi" id="bar-roi-1" data-val="92%"></div>
+                        <div class="chart-bar bar-carbon" id="bar-carb-1" data-val="40%"></div>
+                        <div class="chart-bar bar-compl" id="bar-comp-1" data-val="80%"></div>
+                        <div class="group-label">ROI Centric</div>
+                    </div>
+                    <!-- Group 2: Carbon Focus -->
+                    <div class="chart-group">
+                        <div class="chart-bar bar-roi" id="bar-roi-2" data-val="65%"></div>
+                        <div class="chart-bar bar-carbon" id="bar-carb-2" data-val="95%"></div>
+                        <div class="chart-bar bar-compl" id="bar-comp-2" data-val="100%"></div>
+                        <div class="group-label">Carbon Centric</div>
+                    </div>
+                    <!-- Group 3: Balanced -->
+                    <div class="chart-group"
+                        style="border: 1px solid var(--border-subtle); background:rgba(255,255,255,0.05);">
+                        <div class="chart-bar bar-roi" id="bar-roi-3" data-val="88%"></div>
+                        <div class="chart-bar bar-carbon" id="bar-carb-3" data-val="85%"></div>
+                        <div class="chart-bar bar-compl" id="bar-comp-3" data-val="100%"></div>
+                        <div class="group-label" style="color:var(--accent-neon)">Zissions Balanced</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pathways Grid -->
+            <div class="pathways-grid" id="results-grid">
+                <div
+                    style="grid-column: 1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#30363d; height: 150px; border: 2px dashed #30363d; border-radius: 12px;">
+                    <i class="fa-solid fa-chart-network" style="font-size: 30px; margin-bottom: 10px;"></i>
+                    <span style="font-family: var(--font-tech); font-size: 16px;">Configure Parameters & Run
+                        Simulation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Controls -->
+        <div class="panel-right">
+            <div class="panel-title">
+                <i class="fa-solid fa-sliders"></i> Configuration
+            </div>
+
+            <div class="control-group">
+                <label>Industry Sector</label>
+                <select id="industry-sector" onchange="updateProductList()">
+                    <option value="dairy">Dairy Industry</option>
+                    <option value="fmcg">Processed Foods (FMCG)</option>
+                    <option value="beverage">Beverages</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Product Category</label>
+                <select id="product-type">
+                    <option value="milk">Liquid Milk (Pasteurized)</option>
+                    <option value="yogurt">Yogurt / Curd Cups</option>
+                    <option value="ghee">Ghee (Clarified Butter)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Daily Volume (Units)</label>
+                <input type="number" id="volume-input" value="50000">
+                <div class="slider-container">
+                    <input type="range" min="10000" max="500000" step="5000" value="50000" id="volume-slider">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Current Packaging</label>
+                <select id="current-material">
+                    <option value="virgin">Virgin LDPE Pouch (55 micron)</option>
+                    <option value="multi">Multi-layer Laminate (Non-recyclable)</option>
+                    <option value="rigid">Rigid HDPE Container</option>
+                </select>
+            </div>
+
+            <div class="control-group" style="margin-top:10px;">
+                <label>Optimization Priority</label>
+                <select id="opt-goal">
+                    <option value="balanced">Balanced (Zissions Rec.)</option>
+                    <option value="roi">Maximize ROI (Low Cost)</option>
+                    <option value="carbon">Net Zero (High Sustainability)</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" onclick="runSimulation()">
+                <i class="fa-solid fa-bolt"></i> RUN SIMULATION
+            </button>
+
+            <button class="btn-secondary" onclick="retrainModel()">
+                <i class="fa-solid fa-brain"></i> Retrain Model (Web Data)
+            </button>
+
+            <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-subtle);">
+                <div style="font-size: 10px; color: #484f58; text-align: center;">
+                    <strong>System Status:</strong><br>
+                    Data Scrapers: Active<br>
+                    Compliance Engine: Updated 2025
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- 1. DATA & LOGIC --- */
+
+        // Mock Logs
+        const logs = [
+            { type: 'scraping', text: 'Accessing ScienceDirect API...' },
+            { type: 'update', text: 'rPET pricing updated: -1.2%' },
+            { type: 'scraping', text: 'Scanning CPCB Amendments 2025...' },
+            { type: 'alert', text: 'Alert: New Plastic Waste Rules detected.' },
+            { type: 'scraping', text: 'Fetching LCA data: SimaPro v9...' },
+            { type: 'update', text: 'Neural Net Weights Optimized.' }
+        ];
+
+        // Chat Knowledge Base
+        const chatResponses = {
+            "default": "I can help analyze your packaging supply chain. Try asking about specific materials or regulations.",
+            "impact of 30% rpet?": "Incorporating 30% rPET (Recycled PET) is mandatory for Category I rigid plastics by FY 2025-26. While it increases material cost by ~8-12%, it reduces your EPR compliance fee significantly, resulting in a net ROI improvement of ~5% due to avoided penalties.",
+            "explain multi-layer penalty": "Multi-layer plastics (MLP) are hard to recycle. Under the new eco-modulation norms, MLPs attract a higher EPR fee. Switching to Mono-material (PE/PE) structures can lower your compliance liability by up to 40%.",
+            "current epr target?": "For FY 2024-25, the recycling target is 50% of the plastic waste generated. By 2027-28, this target increases to 80%, with mandatory use of recycled content.",
+            "roi of paper vs plastic": "Paper has a higher upfront cost but lower EPR fees. However, for wet dairy products, barrier coatings often make paper non-recyclable. Our model recommends rHDPE or Mono-PE for better lifecycle ROI in dairy."
+        };
+
+        /* --- 2. ANN VISUALIZATION --- */
+        const canvas = document.getElementById('ann-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let neurons = [];
+        let connections = [];
+
+        function resizeCanvas() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initNetwork();
+        }
+
+        class Neuron {
+            constructor(x, y, layer) {
+                this.x = x; this.y = y; this.layer = layer;
+                this.value = Math.random(); this.target = Math.random();
+            }
+            update() {
+                this.value += (this.target - this.value) * 0.1;
+                if (Math.random() < 0.05) this.target = Math.random();
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 157, ${this.value * 0.8 + 0.2})`; ctx.fill();
+            }
+        }
+
+        function initNetwork() {
+            neurons = []; connections = [];
+            const layers = [5, 8, 8, 3];
+            const layerGap = width / (layers.length + 1);
+
+            layers.forEach((count, layerIdx) => {
+                const x = layerGap * (layerIdx + 1);
+                const nodeGap = height / (count + 1);
+                for (let i = 0; i < count; i++) {
+                    neurons.push(new Neuron(x, nodeGap * (i + 1), layerIdx));
+                }
+            });
+
+            neurons.forEach(n1 => {
+                neurons.forEach(n2 => {
+                    if (n2.layer === n1.layer + 1) {
+                        connections.push({ from: n1, to: n2 });
+                    }
+                });
+            });
+        }
+
+        function animateNetwork() {
+            ctx.clearRect(0, 0, width, height);
+            connections.forEach(conn => {
+                ctx.beginPath(); ctx.moveTo(conn.from.x, conn.from.y); ctx.lineTo(conn.to.x, conn.to.y);
+                const activity = (conn.from.value + conn.to.value) / 2;
+                ctx.strokeStyle = `rgba(88, 166, 255, ${activity * 0.15})`;
+                ctx.lineWidth = 1; ctx.stroke();
+            });
+            neurons.forEach(n => { n.update(); n.draw(); });
+            requestAnimationFrame(animateNetwork);
+        }
+
+        /* --- 3. UI LOGIC --- */
+
+        // Log Feeder
+        const logTerminal = document.getElementById('log-terminal');
+        function addLog() {
+            const entry = logs[Math.floor(Math.random() * logs.length)];
+            const div = document.createElement('div');
+            div.className = `log-entry ${entry.type}`;
+            div.innerHTML = `<span style="opacity:0.5">[${new Date().toLocaleTimeString().split(' ')[0]}]</span> ${entry.text}`;
+            logTerminal.appendChild(div);
+            logTerminal.scrollTop = logTerminal.scrollHeight;
+        }
+        setInterval(addLog, 2000);
+
+        // Dynamic Dropdowns
+        function updateProductList() {
+            const sector = document.getElementById('industry-sector').value;
+            const prodSelect = document.getElementById('product-type');
+            prodSelect.innerHTML = '';
+
+            let options = [];
+            if (sector === 'dairy') {
+                options = [
+                    { val: 'milk', txt: 'Liquid Milk (Pasteurized)' },
+                    { val: 'yogurt', txt: 'Yogurt / Curd Cups' },
+                    { val: 'ghee', txt: 'Ghee (Clarified Butter)' }
+                ];
+            } else if (sector === 'fmcg') {
+                options = [
+                    { val: 'chips', txt: 'Potato Chips (Snacks)' },
+                    { val: 'biscuits', txt: 'Biscuits (Tray + Wrap)' },
+                    { val: 'noodles', txt: 'Instant Noodles' }
+                ];
+            } else {
+                options = [
+                    { val: 'water', txt: 'Mineral Water (PET)' },
+                    { val: 'juice', txt: 'Fruit Juice (Tetra)' },
+                    { val: 'soda', txt: 'Carbonated Drink (Can)' }
+                ];
+            }
+
+            options.forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt.val; el.innerText = opt.txt;
+                prodSelect.appendChild(el);
+            });
+        }
+
+        // Sliders
+        const volInput = document.getElementById('volume-input');
+        const volSlider = document.getElementById('volume-slider');
+        volSlider.addEventListener('input', (e) => volInput.value = e.target.value);
+        volInput.addEventListener('input', (e) => volSlider.value = e.target.value);
+
+        // Simulation
+        function runSimulation() {
+            const loader = document.getElementById('sim-loader');
+            const compSection = document.getElementById('comparison-section');
+            const grid = document.getElementById('results-grid');
+
+            loader.classList.add('active');
+
+            setTimeout(() => {
+                loader.classList.remove('active');
+                compSection.classList.add('active');
+
+                // Animate Charts (Simulated Values)
+                updateChart('bar-roi-1', '92%'); updateChart('bar-carb-1', '40%'); updateChart('bar-comp-1', '80%');
+                updateChart('bar-roi-2', '65%'); updateChart('bar-carb-2', '95%'); updateChart('bar-comp-2', '100%');
+                updateChart('bar-roi-3', '88%'); updateChart('bar-carb-3', '85%'); updateChart('bar-comp-3', '100%');
+
+                // Generate Cards
+                const product = document.getElementById('product-type').options[document.getElementById('product-type').selectedIndex].text;
+
+                grid.innerHTML = `
+                <!-- Strategy 1 -->
+                <div class="pathway-card" onclick="selectPath(1)">
+                    <div>
+                        <div class="pathway-badge badge-roi">Lowest Cost</div>
+                        <h4 style="margin:0 0 5px 0; color:#fff;">Optimized Recycled Content</h4>
+                        <div style="font-size:11px; color:#8b949e; margin-bottom:10px;">For: ${product}</div>
+                        <p style="font-size:12px; margin:0 0 10px 0;">Strategy: Switch to Mono-layer PE with 30% recycled granules.</p>
+                        
+                        <div style="font-size:11px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Cost Savings</span><span style="color:var(--accent-blue)">High</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Carbon Impact</span><span style="color:#8b949e">Moderate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 2 -->
+                <div class="pathway-card" onclick="selectPath(2)">
+                    <div>
+                        <div class="pathway-badge badge-eco">Net Zero Target</div>
+                        <h4 style="margin:0 0 5px 0; color:#fff;">Bio-Polymer Switch</h4>
+                        <div style="font-size:11px; color:#8b949e; margin-bottom:10px;">For: ${product}</div>
+                        <p style="font-size:12px; margin:0 0 10px 0;">Strategy: Fully compostable PLA/PHA packaging materials.</p>
+                        
+                        <div style="font-size:11px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Cost Savings</span><span style="color:var(--accent-red)">Negative</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Carbon Impact</span><span style="color:var(--accent-green)">Ultra Low</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 3 -->
+                <div class="pathway-card" style="border:1px solid var(--accent-neon); background:rgba(46, 160, 67, 0.05);" onclick="selectPath(3)">
+                    <div>
+                        <div class="pathway-badge badge-bal">Zissions Recommended</div>
+                        <h4 style="margin:0 0 5px 0; color:#fff;">Circular Loop Model</h4>
+                        <div style="font-size:11px; color:#8b949e; margin-bottom:10px;">For: ${product}</div>
+                        <p style="font-size:12px; margin:0 0 10px 0;">Strategy: 50% rHDPE + Logistics Optimization to reduce scope 3.</p>
+                        
+                        <div style="font-size:11px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Cost Savings</span><span style="color:var(--accent-neon)">Optimal</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Compliance</span><span style="color:var(--accent-neon)">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+
+                // Add Bot Message
+                addToChat("bot", "Simulation Complete. I have generated 3 pathways. The 'Zissions Recommended' path balances a 12% cost reduction with full 2025 compliance. Check the comparison charts above.");
+
+            }, 1500);
+        }
+
+        function updateChart(id, height) {
+            const el = document.getElementById(id);
+            el.style.height = height;
+        }
+
+        function retrainModel() {
+            const stats = document.getElementById('training-stats');
+            stats.innerHTML = '<i class="fa-solid fa-sync fa-spin"></i> Learning from Web...';
+            setTimeout(() => {
+                stats.innerHTML = 'Epoch: 1212<br>Loss: 0.0210<br>Accuracy: 97.1%';
+                addLog({ type: 'update', text: 'Training complete. Accuracy improved by 0.6%.' });
+            }, 2000);
+        }
+
+        /* --- 4. CHAT FUNCTIONS --- */
+        function sendPrompt(text) {
+            addToChat("user", text);
+            processBotResponse(text);
+        }
+
+        function sendUserMsg() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (text) {
+                addToChat("user", text);
+                processBotResponse(text);
+                input.value = '';
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendUserMsg();
+        }
+
+        function addToChat(role, text) {
+            const history = document.getElementById('chat-history');
+            const msg = document.createElement('div');
+            msg.className = `msg ${role}`;
+            msg.innerText = text;
+            history.appendChild(msg);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function processBotResponse(input) {
+            const lowerInput = input.toLowerCase();
+            let response = chatResponses['default'];
+
+            // Simple keyword matching
+            for (const key in chatResponses) {
+                if (lowerInput.includes(key)) {
+                    response = chatResponses[key];
+                    break;
+                }
+            }
+
+            setTimeout(() => addToChat("bot", response), 600);
+        }
+
+        // Init
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animateNetwork();
+
+    </script>
+</body>
+
+</html>
